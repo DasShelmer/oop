@@ -1,15 +1,16 @@
-from typing import List, TypeVar, Union, Generic
-from .Document import Document
+from typing import List, TypeVar, Optional, Dict, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .Provider import TProvider
+from .Document import TDocument
 
-T = TypeVar("T", bound=Document)
-ResultT = Union[None, T]
 
+class Collection():
+    _items: Dict[str, TDocument]
+    _itemClass: TDocument
+    _provider: 'TProvider'
+    _name: str
 
-class Collection(Generic[T]):
-    _items: dict
-    _itemClass: T
-
-    def __init__(self, provider, name: str, items: List[dict]):
+    def __init__(self, provider: 'TProvider', name: str, items: List[Dict[str, TDocument]]):
         self._provider = provider
         self._name = name
         self._itemClass = next((model for model in provider.models if model.__name__ == name))
@@ -28,18 +29,21 @@ class Collection(Generic[T]):
     def provider(self):
         return self._provider
 
-    def findById(self, id: str) -> ResultT:
+    def findById(self, id: str) -> Optional[TDocument]:
         return self._items.get(id)
 
-    def deleteById(self, id: str) -> ResultT:
+    def deleteById(self, id: str) -> Optional[TDocument]:
         return self._items.pop(id)
 
-    def create(self, item: T):
+    def create(self, item: TDocument):
         self._items[item.id] = item
         return item
 
     def __eq__(self, other):
         return self._name == other._name
 
-    def getItemsList(self):
+    def getItemsList(self) -> List[TDocument]:
         return list(dict(self._items[itemId]) for itemId in self._items)
+
+
+TCollection = TypeVar('TCollection', bound=Collection)

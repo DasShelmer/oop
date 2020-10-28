@@ -1,4 +1,5 @@
 from db.Document import Document
+from typing import TypeVar
 
 
 class Hotel(Document):
@@ -40,3 +41,6 @@ class Hotel(Document):
     @climate.setter
     def climate(self, climate):
         self._climate = climate
+
+
+THotel = TypeVar('THotel', bound=Hotel)

@@ -1,4 +1,7 @@
 from db.Document import Document
+from typing import Optional
+from .Route import TRoute
+from .User import TUser
 
 
 class Waybill(Document):
@@ -11,19 +14,19 @@ class Waybill(Document):
 
     @property
     def route(self):
-        return self._provider.findItem('Route', self._route)
+        return self._route
 
     @route.setter
     def route(self, route):
-        self._route = route._id
+        self._route = route
 
     @property
     def user(self):
-        return self._provider.findItem('User', self._user)
+        return self._user
 
     @user.setter
     def user(self, user):
-        self._user = user._id
+        self._user = user
 
     @property
     def departureDate(self):
@@ -41,11 +44,19 @@ class Waybill(Document):
     def count(self, count):
         self._count = count
 
-    @property
-    def discount(self):
+    def getUser(self) -> Optional[TUser]:
+        return self._provider.findItem('User', self._user)
+
+    def getRoute(self) -> Optional[TRoute]:
+        return self._provider.findItem('Route', self._route)
+
+    def getDiscount(self):
         return 5 if self._count > 1 else 0
 
-    @property
-    def cost(self):
-        fullCost = self.route.cost * self.count
-        return fullCost * (1 - self.discount / 100) if self.discount else fullCost
+    def getCost(self):
+        route = self.getRoute()
+        if not route:
+            raise TypeError('Bad Route by id %s', self._route)
+        fullCost = route.cost * self.count
+        discount = self.getDiscount()
+        return fullCost * (1 - discount / 100) if discount else fullCost

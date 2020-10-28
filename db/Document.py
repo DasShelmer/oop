@@ -1,13 +1,18 @@
 import time
 import struct
-from typing import List
+from typing import List, TypeVar, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .Provider import TProvider
+    from .Collection import TCollection
 
 
 class Document:
     _id: str
     _propsToSave: List[str]
+    _collection: 'TCollection'
+    _provider: 'TProvider'
 
-    def __init__(self, collection, raw={}):
+    def __init__(self, collection: 'TCollection', raw={}):
         self._collection = collection
         self._provider = collection.provider
 
@@ -40,3 +45,6 @@ class Document:
     @staticmethod
     def _generateId():
         return struct.pack('f', time.time()).hex()
+
+
+TDocument = TypeVar('TDocument', bound=Document)
