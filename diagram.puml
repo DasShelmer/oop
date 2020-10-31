@@ -1,0 +1,104 @@
+@startuml
+
+class Document{
+    -_id
+    -_propsToSave
+    -_collection
+    -_provider
+    +id
+    +collection
+    +__init__(collection, raw)
+    +__iter__()
+}
+
+class Collection{
+    -_name
+    -_items
+    -_itemClass
+    -_provider
+    +name
+    +items
+    +provider
+    +__init__(provider, name, items)
+    +findById(id)
+    +deleteById(id)
+    +create(item)
+    +getItemsList()
+}
+class Provider{
+    -_models
+    -_collections
+    +models
+    +__init__()
+    +getCollection(name)
+    +findItem(collectionName, itemId)
+    +createItem(collectionName, item)
+    +deleteItem(collectionName, itemId)
+    +load()
+    +save()
+}
+
+class JSONProvider <<Provider>>{
+    +__init__(readFile, writeFile)
+    +load()
+    +save()
+}
+class User <<Document>>{
+    -_secname
+    -_firstname
+    -_patronym
+    -_adress
+    -_phone
+    +secname
+    +firstname
+    +patronym
+    +adress
+    +phone
+    +__init__(collection, ..., raw)
+}
+class Hotel <<Document>>{
+    -_name
+    -_cost
+    -_country
+    +name
+    +cost
+    +country
+    +__init__(collection, ..., raw)
+}
+class Route <<Document>>{
+    -_duration
+    -_climate
+    -_hotelID
+    +duration
+    +climate
+    +hotelID
+    +__init__(collection, ..., raw)
+    +getHotel()
+}
+class Waybill <<Document>>{
+    -_routeID
+    -_userID
+    -_departureDate
+    -_count
+    +routeID
+    +userID
+    +departureDate
+    +count
+    +discount
+    +__init__(collection, ..., raw)
+    +getUser()
+    +getRoute()
+    +getCost()
+}
+JSONProvider <|-- Provider
+Provider *-- Collection
+Collection *-- Document
+User <|-- Document
+Route <|-- Document
+Hotel <|-- Document
+Waybill <|-- Document
+Waybill o-- User
+Waybill o-- Route
+Route o-- Hotel
+Waybill o-- Hotel
+@enduml

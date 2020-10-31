@@ -1,13 +1,11 @@
 from db.Document import Document
-from typing import TypeVar
 
 
 class Hotel(Document):
-    def __init__(self, collection, name='', cost=0.0, country='', climate='', raw={}):
+    def __init__(self, collection, name='', cost=0.0, country='', raw={}):
         self._name = name
         self._cost = cost
         self._country = country
-        self._climate = climate
         super().__init__(collection=collection, raw=raw)
 
     @property
@@ -33,14 +31,3 @@ class Hotel(Document):
     @country.setter
     def country(self, country):
         self._country = country
-
-    @property
-    def climate(self):
-        return self._climate
-
-    @climate.setter
-    def climate(self, climate):
-        self._climate = climate
-
-
-THotel = TypeVar('THotel', bound=Hotel)

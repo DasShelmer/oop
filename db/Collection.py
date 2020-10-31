@@ -1,19 +1,12 @@
-from typing import List, TypeVar, Optional, Dict, TYPE_CHECKING
-if TYPE_CHECKING:
-    from .Provider import TProvider
-from .Document import TDocument
-
 
 class Collection():
-    _items: Dict[str, TDocument]
-    _itemClass: TDocument
-    _provider: 'TProvider'
-    _name: str
 
-    def __init__(self, provider: 'TProvider', name: str, items: List[Dict[str, TDocument]]):
+    def __init__(self, provider, name, items):
         self._provider = provider
         self._name = name
-        self._itemClass = next((model for model in provider.models if model.__name__ == name))
+        for model in provider.models:
+            if model.__name__ == name:
+                self._itemClass = model
         itemsRaw = list(self._itemClass(collection=self, raw=item) for item in items)
         self._items = dict(map((lambda item: (item.id, item)), itemsRaw))
 
@@ -29,21 +22,20 @@ class Collection():
     def provider(self):
         return self._provider
 
-    def findById(self, id: str) -> Optional[TDocument]:
+    def findById(self, id: str):
         return self._items.get(id)
 
-    def deleteById(self, id: str) -> Optional[TDocument]:
+    def deleteById(self, id: str):
         return self._items.pop(id)
 
-    def create(self, item: TDocument):
+    def create(self, item):
+        item.collection = self
         self._items[item.id] = item
+
         return item
 
     def __eq__(self, other):
         return self._name == other._name
 
-    def getItemsList(self) -> List[TDocument]:
+    def getItemsList(self):
         return list(dict(self._items[itemId]) for itemId in self._items)
-
-
-TCollection = TypeVar('TCollection', bound=Collection)

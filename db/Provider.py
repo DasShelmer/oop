@@ -1,18 +1,13 @@
-
 from models import models
-from abc import ABC, abstractmethod
-from typing import Dict, List, TypeVar, Optional, TYPE_CHECKING
-if TYPE_CHECKING:
-    from .Document import TDocument
-from .Collection import TCollection
+from .Collection import Collection
 
 
-class Provider(ABC):
-    _collections: Dict[str, List['TDocument']]
-
+class Provider():
     def __init__(self):
         self._models = models
-        self._collections = dict({})
+        self._collections = {}
+        for model in models:
+            self._collections[model.__name__] = Collection(self, model.__name__, [])
 
     @property
     def models(self):
@@ -21,29 +16,24 @@ class Provider(ABC):
     def getCollection(self, name: str):
         return self._collections.get(name)
 
-    def findItem(self, collectionName: str, itemId: str) -> Optional['TDocument']:
-        coll: 'TCollection' = self._collections.get(collectionName)
+    def findItem(self, collectionName: str, itemId: str):
+        coll = self._collections.get(collectionName)
         if (coll):
             return coll.findById(itemId)
         return None
 
-    def createItem(self, collectionName: str, item) -> Optional['TDocument']:
-        coll: 'TCollection' = self._collections.get(collectionName)
+    def createItem(self, collectionName: str, item):
+        coll = self._collections.get(collectionName)
         if (coll):
             return coll.create(item)
         return None
 
-    def deleteItem(self, collectionName: str, itemId: str) -> Optional['TDocument']:
-        coll: 'TCollection' = self._collections.get(collectionName)
+    def deleteItem(self, collectionName: str, itemId: str):
+        coll = self._collections.get(collectionName)
         if (coll):
             return coll.deleteById(itemId)
         return None
 
-    @abstractmethod
     def load(self): pass
 
-    @abstractmethod
     def save(self): pass
-
-
-TProvider = TypeVar('TProvider', bound=Provider)

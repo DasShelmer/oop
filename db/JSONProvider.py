@@ -14,9 +14,12 @@ class JSONProvider(Provider):
 
     def load(self):
         f = open(__dir__ + self._readFile, 'r')
-        raw = json.load(f)
+        raw = dict(json.load(f))
         f.close()
-        self._collections = dict((collName, Collection(self, collName, raw[collName])) for collName in raw)
+        collections = self._collections
+        for collName in raw:
+            collections[collName] = Collection(self, collName, raw[collName])
+        self._collections = collections
 
     def save(self):
         resJson = dict((collName, self._collections[collName].getItemsList()) for collName in self._collections)

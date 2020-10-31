@@ -1,32 +1,29 @@
 from db.Document import Document
-from typing import Optional
-from .Route import TRoute
-from .User import TUser
 
 
 class Waybill(Document):
-    def __init__(self, collection, route='', user='', departureDate='', count=0.0, raw={}):
-        self._route = route
-        self._user = user
+    def __init__(self, collection, routeID='', userID='', departureDate='', count=0.0, raw={}):
+        self._routeID = routeID
+        self._userID = userID
         self._departureDate = departureDate
         self._count = count
         super().__init__(collection=collection, raw=raw)
 
     @property
-    def route(self):
-        return self._route
+    def routeID(self):
+        return self._routeID
 
-    @route.setter
-    def route(self, route):
-        self._route = route
+    @routeID.setter
+    def routeID(self, routeID):
+        self._routeID = routeID
 
     @property
-    def user(self):
-        return self._user
+    def userID(self):
+        return self._userID
 
-    @user.setter
-    def user(self, user):
-        self._user = user
+    @userID.setter
+    def userID(self, userID):
+        self._userID = userID
 
     @property
     def departureDate(self):
@@ -44,19 +41,23 @@ class Waybill(Document):
     def count(self, count):
         self._count = count
 
-    def getUser(self) -> Optional[TUser]:
-        return self._provider.findItem('User', self._user)
+    def getUser(self):
+        return self._provider.findItem('User', self._userID)
 
-    def getRoute(self) -> Optional[TRoute]:
-        return self._provider.findItem('Route', self._route)
+    def getRoute(self):
+        return self._provider.findItem('Route', self._routeID)
 
-    def getDiscount(self):
+    @property
+    def discount(self):
         return 5 if self._count > 1 else 0
 
     def getCost(self):
         route = self.getRoute()
         if not route:
-            raise TypeError('Bad Route by id %s', self._route)
-        fullCost = route.cost * self.count
-        discount = self.getDiscount()
+            raise TypeError('Bad RouteID')
+        hotel = route.getHotel()
+        if not hotel:
+            raise TypeError('Bad HotelID')
+        fullCost = hotel.cost * self.count
+        discount = self.discount
         return fullCost * (1 - discount / 100) if discount else fullCost

@@ -1,5 +1,4 @@
 from db.Document import Document
-from typing import TypeVar
 
 
 class User(Document):
@@ -50,6 +49,3 @@ class User(Document):
     @phone.setter
     def phone(self, phone):
         self._phone = phone
-
-
-TUser = TypeVar('TUser', bound=User)

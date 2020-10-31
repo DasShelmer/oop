@@ -1,12 +1,11 @@
 from db.Document import Document
-from typing import TypeVar, Optional
-from .Hotel import THotel
 
 
 class Route(Document):
-    def __init__(self, collection, duration=0.0, hotel='', raw={}):
+    def __init__(self, collection, duration=0.0, climate='', hotelID='', raw={}):
         self._duration = duration
-        self._hotel = hotel
+        self._hotelID = hotelID
+        self._climate = climate
         super().__init__(collection=collection, raw=raw)
 
     @property
@@ -18,19 +17,20 @@ class Route(Document):
         self._duration = duration
 
     @property
-    def hotel(self):
-        return self._hotel
+    def hotelID(self):
+        return self._hotelID
 
-    @hotel.setter
-    def hotel(self, hotel):
-        self._hotel = hotel
+    @hotelID.setter
+    def hotelID(self, hotelID):
+        self._hotelID = hotelID
 
     @property
-    def cost(self):
-        return self.hotel.cost
+    def climate(self):
+        return self._climate
 
-    def getHotel(self) -> Optional[THotel]:
-        return self._provider.findItem('Hotel', self._hotel)
+    @climate.setter
+    def climate(self, climate):
+        self._climate = climate
 
-
-TRoute = TypeVar('TRoute', bound=Route)
+    def getHotel(self):
+        return self._provider.findItem('Hotel', self._hotelID)

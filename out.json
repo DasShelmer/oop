@@ -1,1 +1,14 @@
-{}
+{
+    "Route": [],
+    "User": [
+        {
+            "_adress": "",
+            "_firstname": "Vasilii",
+            "_id": "403abf4e",
+            "_patronym": "Petrovich",
+            "_phone": "",
+            "_secname": "Zubenko"
+        }
+    ],
+    "Waybill": []
+}

@@ -1,5 +1,6 @@
 from .Route import Route
 from .User import User
 from .Waybill import Waybill
+from .Hotel import Hotel
 
-models = [Route, User, Waybill]
+models = [User, Hotel, Route, Waybill]
