@@ -1,102 +1,144 @@
 @startuml
 
 class Document{
+    ~_propsToSave
     -_id
-    -_propsToSave
     -_collection
     -_provider
-    +id
-    +collection
-    +__init__(collection, raw)
+    +getId()
+    +getCollection()
+    +setCollection(collection)
+    +__str__()
     +__iter__()
+    ~__generateId()
 }
 
-class Collection{
-    -_name
-    -_items
-    -_itemClass
-    -_provider
-    +name
-    +items
-    +provider
-    +__init__(provider, name, items)
-    +findById(id)
-    +deleteById(id)
-    +create(item)
-    +getItemsList()
-}
-class Provider{
-    -_models
-    -_collections
-    +models
-    +__init__()
-    +getCollection(name)
-    +findItem(collectionName, itemId)
-    +createItem(collectionName, item)
-    +deleteItem(collectionName, itemId)
-    +load()
-    +save()
-}
-
-class JSONProvider <<Provider>>{
-    +__init__(readFile, writeFile)
-    +load()
-    +save()
-}
-class User <<Document>>{
+class User <<Document>> {
+    ~_propsToSave
     -_secname
     -_firstname
     -_patronym
     -_adress
     -_phone
-    +secname
-    +firstname
-    +patronym
-    +adress
-    +phone
-    +__init__(collection, ..., raw)
+    +getSecname()
+    +getFirstname()
+    +getPatronym()
+    +getAdress()
+    +getPhone()
+    +setSecname(secname)
+    +setFirstname(firstname)
+    +setPatronym(patronym)
+    +setAdress(adress)
+    +setPhone(phone)
 }
-class Hotel <<Document>>{
+
+class Hotel <<Document>> {
+    ~_propsToSave
     -_name
     -_cost
     -_country
-    +name
-    +cost
-    +country
-    +__init__(collection, ..., raw)
+    +getName()
+    +getCost()
+    +getCountry()
+    +setName(name)
+    +setCost(cost)
+    +setCountry(country)
 }
-class Route <<Document>>{
+
+class Route <<Document>> {
+    ~_propsToSave
     -_duration
-    -_climate
     -_hotelID
-    +duration
-    +climate
-    +hotelID
-    +__init__(collection, ..., raw)
+    -_climate
+    +getDuration()
+    +getHotelID()
+    +getClimate()
     +getHotel()
+    +setDuration(duration)
+    +setClimate(climate)
+    +setHotel(hotel)
 }
-class Waybill <<Document>>{
+
+class Waybill <<Document>> {
+    ~_propsToSave
     -_routeID
     -_userID
     -_departureDate
     -_count
-    +routeID
-    +userID
-    +departureDate
-    +count
-    +discount
-    +__init__(collection, ..., raw)
+    +getRouteID()
+    +getUserID()
+    +getDepartureDate()
+    +getCount()
     +getUser()
     +getRoute()
+    +getDiscount()
     +getCost()
+    +setRoute(route)
+    +setUser(user)
+    +setDepartureDate(departureDate)
+    +setCount(count)
 }
+
+class Collection {
+    -_provider
+    -_itemClass
+    -_name
+    +getItemClass()
+    +getName()
+    +getProvider()
+    +map(fn)
+    +find(fn)
+    +filter(fn)
+    +getIdList()
+    +findById(id)
+    +deleteById(id)
+    +append(item)
+    +clear()
+    +__str__()
+    +getDictsList()
+}
+
+class Provider {
+    -_models
+    -_collections
+    +getModels()
+    +getModel(modelName)
+    +getCollection(name)
+    +findItem(collectionName, itemId)
+    +appendItem(collectionName, item)
+    +removeItem(collectionName, itemId)
+    +load(): pass
+    +save(): pass
+}
+
+class JSONProvider <<Provider>> {
+    -_readFile
+    -_writeFile
+    +load()
+    +save()
+}
+
+class SQLiteProvider <<Provider>> {
+    -_connection
+    -_cursor
+    +removeItem(collectionName, itemId)
+    +save()
+    +load()
+    -__get_table(tablename)
+    -__post_row(tablename, itemDict)
+    -__remove_row(tablename, id)
+}
+
+SQLiteProvider <|-- Provider
 JSONProvider <|-- Provider
 Provider *-- Collection
 Collection *-- Document
+
 User <|-- Document
 Route <|-- Document
 Hotel <|-- Document
 Waybill <|-- Document
+
 Waybill o-- User
 Waybill o-- Route
 Route o-- Hotel

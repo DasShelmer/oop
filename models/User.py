@@ -2,50 +2,42 @@ from db.Document import Document
 
 
 class User(Document):
-    def __init__(self, collection, secname='', firstname='', patronym='', adress='', phone='', raw={}):
-        self._secname = secname
-        self._firstname = firstname
-        self._patronym = patronym
-        self._adress = adress
-        self._phone = phone
-        super().__init__(collection=collection, raw=raw)
+    _propsToSave = ['_id', '_secname', '_firstname', '_patronym', '_adress', '_phone']
 
-    @property
-    def secname(self):
+    def __init__(self, secname='', firstname='', patronym='', adress='', phone='', id='', collection=None, raw={}):
+        self.setSecname(secname)
+        self.setFirstname(firstname)
+        self.setPatronym(patronym)
+        self.setAdress(adress)
+        self.setPhone(phone)
+        super().__init__(id, collection, raw)
+
+    def getSecname(self):
         return self._secname
 
-    @secname.setter
-    def secname(self, secname):
-        self._secname = secname
-
-    @property
-    def firstname(self):
+    def getFirstname(self):
         return self._firstname
 
-    @firstname.setter
-    def firstname(self, firstname):
-        self._firstname = firstname
-
-    @property
-    def patronym(self):
+    def getPatronym(self):
         return self._patronym
 
-    @patronym.setter
-    def patronym(self, patronym):
-        self._patronym = patronym
-
-    @property
-    def adress(self):
+    def getAdress(self):
         return self._adress
 
-    @adress.setter
-    def adress(self, adress):
-        self._adress = adress
-
-    @property
-    def phone(self):
+    def getPhone(self):
         return self._phone
 
-    @phone.setter
-    def phone(self, phone):
+    def setSecname(self, secname):
+        self._secname = secname
+
+    def setFirstname(self, firstname):
+        self._firstname = firstname
+
+    def setPatronym(self, patronym):
+        self._patronym = patronym
+
+    def setAdress(self, adress):
+        self._adress = adress
+
+    def setPhone(self, phone):
         self._phone = phone

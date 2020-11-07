@@ -7,32 +7,40 @@ class Provider():
         self._models = models
         self._collections = {}
         for model in models:
-            self._collections[model.__name__] = Collection(self, model.__name__, [])
+            self._collections[model.__name__] = Collection(self, model)
 
-    @property
-    def models(self):
+    def getModels(self):
         return self._models
 
-    def getCollection(self, name: str):
+    def getModel(self, modelName):
+        return next(m for m in self.getModels() if m.__name__ == modelName)
+
+    def getCollection(self, name):
         return self._collections.get(name)
 
-    def findItem(self, collectionName: str, itemId: str):
+    def findItem(self, collectionName, itemId):
         coll = self._collections.get(collectionName)
         if (coll):
             return coll.findById(itemId)
         return None
 
-    def createItem(self, collectionName: str, item):
+    def appendItem(self, collectionName, item):
         coll = self._collections.get(collectionName)
         if (coll):
-            return coll.create(item)
+            return coll.append(item)
         return None
 
-    def deleteItem(self, collectionName: str, itemId: str):
+    def removeItem(self, collectionName, itemId):
         coll = self._collections.get(collectionName)
         if (coll):
-            return coll.deleteById(itemId)
+            return coll.removeById(itemId)
         return None
+
+    def __str__(self):
+        s = ''
+        for coll in self._collections.values():
+            s += str(coll)+'\n'
+        return s
 
     def load(self): pass
 

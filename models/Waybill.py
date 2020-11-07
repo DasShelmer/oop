@@ -1,54 +1,45 @@
 from db.Document import Document
+from .User import User
+from .Route import Route
 
 
 class Waybill(Document):
-    def __init__(self, collection, routeID='', userID='', departureDate='', count=0.0, raw={}):
-        self._routeID = routeID
-        self._userID = userID
-        self._departureDate = departureDate
-        self._count = count
-        super().__init__(collection=collection, raw=raw)
+    _propsToSave = ['_id', '_routeID', '_userID', '_departureDate', '_count']
 
-    @property
-    def routeID(self):
+    def __init__(self, route=None, user=None, departureDate='', count=0.0, id='', collection=None, raw={}):
+        if route:
+            self.setRoute(route)
+        if user:
+            self.setUser(user)
+        self.setDepartureDate(departureDate)
+        self.setCount(count)
+        super().__init__(id, collection, raw)
+
+    def getRouteID(self):
         return self._routeID
 
-    @routeID.setter
-    def routeID(self, routeID):
-        self._routeID = routeID
-
-    @property
-    def userID(self):
+    def getUserID(self):
         return self._userID
 
-    @userID.setter
-    def userID(self, userID):
-        self._userID = userID
-
-    @property
-    def departureDate(self):
+    def getDepartureDate(self):
         return self._departureDate
 
-    @departureDate.setter
-    def departureDate(self, departureDate):
-        self._departureDate = departureDate
-
-    @property
-    def count(self):
+    def getCount(self):
         return self._count
 
-    @count.setter
-    def count(self, count):
-        self._count = count
-
     def getUser(self):
-        return self._provider.findItem('User', self._userID)
+        user = self._provider.findItem('User', self._userID)
+        if isinstance(user, User):
+            return user
+        return None
 
     def getRoute(self):
-        return self._provider.findItem('Route', self._routeID)
+        route = self._provider.findItem('Route', self._routeID)
+        if isinstance(route, Route):
+            return route
+        return None
 
-    @property
-    def discount(self):
+    def getDiscount(self):
         return 5 if self._count > 1 else 0
 
     def getCost(self):
@@ -58,6 +49,18 @@ class Waybill(Document):
         hotel = route.getHotel()
         if not hotel:
             raise TypeError('Bad HotelID')
-        fullCost = hotel.cost * self.count
-        discount = self.discount
-        return fullCost * (1 - discount / 100) if discount else fullCost
+        fullCost = hotel.getCost() * self.getCount()
+        discount = self.getDiscount()
+        return fullCost * (100 - discount) / 100 if discount else fullCost
+
+    def setRoute(self, route):
+        self._routeID = route.getId()
+
+    def setUser(self, user):
+        self._userID = user.getId()
+
+    def setDepartureDate(self, departureDate):
+        self._departureDate = departureDate
+
+    def setCount(self, count):
+        self._count = count

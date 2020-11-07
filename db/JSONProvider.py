@@ -1,9 +1,6 @@
 from .Provider import Provider
 from .Collection import Collection
 import json
-import os
-
-__dir__ = os.path.dirname(os.path.realpath('__file__')) + "\\"
 
 
 class JSONProvider(Provider):
@@ -13,16 +10,16 @@ class JSONProvider(Provider):
         super().__init__()
 
     def load(self):
-        f = open(__dir__ + self._readFile, 'r')
-        raw = dict(json.load(f))
+        f = open(self._readFile, 'r', encoding='utf-8')
+        raw = json.load(f)
         f.close()
         collections = self._collections
         for collName in raw:
-            collections[collName] = Collection(self, collName, raw[collName])
+            collections[collName] = Collection(self, self.getModel(collName), raw[collName])
         self._collections = collections
 
     def save(self):
-        resJson = dict((collName, self._collections[collName].getItemsList()) for collName in self._collections)
-        f = open(os.path.join(__dir__ + self._writeFile), 'w')
-        json.dump(resJson, f, sort_keys=True, indent=4)
+        resJson = dict((collName, coll.getDictsList()) for collName, coll in self._collections.items())
+        f = open(self._writeFile, 'w', encoding='utf-8')
+        json.dump(resJson, f, sort_keys=True, indent=4, ensure_ascii=False)
         f.close()

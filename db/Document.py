@@ -1,38 +1,32 @@
-import time
-import struct
+import uuid
 
 
 class Document:
+    _propsToSave = ['_id']
 
-    def __init__(self, collection, raw={}):
+    def __init__(self, id='', collection=None, raw={}):
         if collection:
-            self._collection = collection
-            self._provider = collection.provider
-
+            self.setCollection(collection)
         if '_id' in raw:
             self._id = raw['_id']
+        elif id:
+            self._id = str(id)
         else:
-            self._id = Document._generateId()
+            self._id = Document.__generateId()
 
-        all_props = dir(self)
-        self._propsToSave = list(name for name in all_props if name.startswith('_') and name[1:] in all_props)
+        for key in self.__class__._propsToSave:
+            if key in raw:
+                setattr(self, key, raw[key])
 
-        for name in self._propsToSave:
-            if name in raw:
-                setattr(self, name, raw[name])
-
-    @property
-    def id(self):
+    def getId(self):
         return self._id
 
-    @property
-    def collection(self):
+    def getCollection(self):
         return self._collection
 
-    @collection.setter
-    def collection(self, collection):
+    def setCollection(self, collection):
         self._collection = collection
-        self._provider = collection.provider
+        self._provider = collection.getProvider()
 
     def __eq__(self, other):
         return self._id == other._id
@@ -41,9 +35,15 @@ class Document:
         return self._id
 
     def __iter__(self):
-        for key in self._propsToSave:
+        for key in self.__class__._propsToSave:
             yield (key, getattr(self, key))
 
+    def __str__(self):
+        s = ''
+        for key in self.__class__._propsToSave:
+            s += '{0}: {1}, '.format(key, getattr(self, key))
+        return s[:-2]
+
     @staticmethod
-    def _generateId():
-        return struct.pack('f', time.time()).hex()
+    def __generateId():
+        return uuid.uuid1().hex
