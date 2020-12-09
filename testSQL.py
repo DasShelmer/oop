@@ -4,6 +4,7 @@ from models.Hotel import Hotel
 from models.Route import Route
 from models.Waybill import Waybill
 
+# Cоздание провайдера SQL на основе БД из файла
 sqlP = SQLiteProvider('db.sqlite3')
 
 u1 = User('Иванович', 'Иван', 'Иванов', 'г. Москва, ул. Ленина, д 123, кв 10', '9169761398', '1')
@@ -36,21 +37,30 @@ sqlP.appendItem('Waybill', w1)
 sqlP.appendItem('Waybill', w2)
 sqlP.appendItem('Waybill', w3)
 
+# Вывод эл-тов из всех коллекций
 print(sqlP)
+# Проверка рассчёта суммы для путёвки
 print(w1.getCost() == 17955.0)
 print(w2.getCost() == 7000)
 print(w3.getCost() == 10640.0)
 
+# Применение всех изменений в БД (commit)
 sqlP.save()
-del sqlP
 
+# Пересоздание провайдера SQL
+del sqlP
 sqlP = SQLiteProvider('db.sqlite3')
+
+# Загрузка всех таблиц из БД в коллекции
 sqlP.load()
+
 w1 = sqlP.findItem('Waybill', w1.getId())
 w2 = sqlP.findItem('Waybill', w2.getId())
 w3 = sqlP.findItem('Waybill', w3.getId())
 
+# Вывод эл-тов из всех коллекций
 print(sqlP)
+# Проверка рассчёта суммы для путёвки
 print(w1.getCost() == 17955.0)
 print(w2.getCost() == 7000)
 print(w3.getCost() == 10640.0)
@@ -60,5 +70,8 @@ sqlP.removeItem('Route', r3.getId())
 sqlP.removeItem('User', u3.getId())
 
 
+# Вывод эл-тов из всех коллекций
 print(sqlP)
+
+# Применение всех изменений в БД (commit)
 sqlP.save()

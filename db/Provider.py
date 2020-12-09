@@ -1,7 +1,8 @@
 from models import models
 from .Collection import Collection
 
-
+# Провайдер - базовый класс для новых провайдеров.
+# Реализует работу, загрузку и сохранение коллекций и док-ов в них.
 class Provider():
     def __init__(self):
         self._models = models

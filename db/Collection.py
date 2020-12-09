@@ -1,4 +1,6 @@
 
+
+# Коллекция, реализует удобную загрузку-сохранение для списка документов.
 class Collection():
 
     def __init__(self, provider, itemClass, itemsRaw=[]):
